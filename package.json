@@ -1,0 +1,33 @@
+{
+  "name": "fsd-be",
+  "version": "1.0.0",
+  "description": "Backend Application - Management system ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gowtham5872/fsd-be.git"
+  },
+  "keywords": [
+    "backend",
+    "REST",
+    "API",
+    "NODE",
+    "JS",
+    "EXPRESS",
+    "JS",
+    "MongoDB"
+  ],
+  "author": "gowtham t",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gowtham5872/fsd-be/issues"
+  },
+  "homepage": "https://github.com/Gowtham5872/fsd-be#readme",
+  "dependencies": {
+    "mongodb": "^6.5.0"
+  }
+}
