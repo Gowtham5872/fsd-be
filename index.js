@@ -1,34 +1,41 @@
-const bodyParser = require('body-parser');
 const express = require('express');
+const fs = require('fs');
+const { join } = require('path');
 const app = express();
-app.use(bodyparser.json());
+const folderPath = join(__dirname, 'files'); 
+app.use(express.json());
+app.post('/createFile', (req, res) => {
+    const timestamp = new Date().toISOString();
+    const filename = `${timestamp}.txt`;
+    const filePath = join(folderPath, filename);
+    const content = timestamp;
 
-const HandleGetRequest = (request, response) => {
-    const requestedId = request.params.id;
-    console.log(requestedId);
-    if(requestedId == 1){
-    response.send("Server running successfully with ID: " + requestedId);
-    }else{
-        response.send("server running success"+ 2);
-    }
-};
-
-const HandleSecondRequest = (request, response) => {
-    const id = request.query.id;
-    console.log(id);
-  response.send("second api looking good"+ id);
-   
-};
-
-app.get("/myfirstapi/:id", HandleGetRequest);
-app.get("/mysecondapi", HandleSecondRequest);
-
-app.listen(3000, () => {
-    console.log('Server started at http://localhost:3000');
+    fs.writeFile(filePath, content, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error creating file');
+        } else {
+            console.log('File created:', filename);
+            res.send('File created successfully');
+        }
+    });
 });
-app.get("/",(request,response)=>{
-    response.sendFile(path.join(__dirname,"/index.html"));
-})
+app.get('/files', (req, res) => {
+    fs.readdir(folderPath, (err, files) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error reading files');
+        } else {
+            res.send(files);
+        }
+    });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server started at http://localhost:${PORT}`);
+});
+
 
 
 
