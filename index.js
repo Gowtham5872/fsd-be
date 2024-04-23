@@ -1,40 +1,90 @@
 const express = require('express');
-const fs = require('fs');
-const { join } = require('path');
+const bodyParser = require('body-parser');
 const app = express();
-const folderPath = join(__dirname, 'files'); 
-app.use(express.json());
-app.post('/createFile', (req, res) => {
-    const timestamp = new Date().toISOString();
-    const filename = `${timestamp}.txt`;
-    const filePath = join(folderPath, filename);
-    const content = timestamp;
-
-    fs.writeFile(filePath, content, (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error creating file');
-        } else {
-            console.log('File created:', filename);
-            res.send('File created successfully');
-        }
-    });
+app.use(bodyParser.json());
+let rooms = [];
+let bookings = [];
+app.post('/rooms', (req, res) => {
+  const { seats, amenities, pricePerHour } = req.body;
+  const roomId = rooms.length + 1;
+  const room = {
+    id: roomId,
+    seats,
+    amenities,
+    pricePerHour
+  };
+  rooms.push(room);
+  res.status(201).json(room);
 });
-app.get('/files', (req, res) => {
-    fs.readdir(folderPath, (err, files) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error reading files');
-        } else {
-            res.send(files);
-        }
+app.post('/bookings', (req, res) => {
+  const { customerName, date, startTime, endTime, roomId } = req.body;
+  const bookingId = bookings.length + 1;
+  const booking = {
+    id: bookingId,
+    customerName,
+    date,
+    startTime,
+    endTime,
+    roomId,
+    status: 'Booked'
+  };
+  bookings.push(booking);
+  res.status(201).json(booking);
+});
+app.get('/rooms/booked', (req, res) => {
+  const bookedRooms = rooms.map(room => {
+    const bookingsForRoom = bookings.filter(booking => booking.roomId === room.id);
+    return {
+      roomName: `Room ${room.id}`,
+      bookedStatus: bookingsForRoom.length > 0 ? 'Booked' : 'Available',
+      bookings: bookingsForRoom.map(booking => ({
+        customerName: booking.customerName,
+        date: booking.date,
+        startTime: booking.startTime,
+        endTime: booking.endTime
+      }))
+    };
+  });
+  res.json(bookedRooms);
+});
+app.get('/customers/booked', (req, res) => {
+  const customersWithBookings = [];
+  bookings.forEach(booking => {
+    const room = rooms.find(room => room.id === booking.roomId);
+    customersWithBookings.push({
+      customerName: booking.customerName,
+      roomName: `Room ${room.id}`,
+      date: booking.date,
+      startTime: booking.startTime,
+      endTime: booking.endTime
     });
+  });
+  res.json(customersWithBookings);
+});
+app.get('/customers/booking-count', (req, res) => {
+  const bookingCount = {};
+  bookings.forEach(booking => {
+    const key = `${booking.customerName}-${booking.roomId}-${booking.date}-${booking.startTime}-${booking.endTime}`;
+    if (bookingCount[key]) {
+      bookingCount[key].count++;
+    } else {
+      bookingCount[key] = {
+        count: 1,
+        bookingId: booking.id,
+        bookingDate: booking.date,
+        bookingStatus: booking.status
+      };
+    }
+  });
+  res.json(bookingCount);
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server started at http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
+
 
 
 
