@@ -4,7 +4,7 @@ const db = require('./db');
 const { Mentor, Student } = require('./schema');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT =  3000;
 
 app.use(bodyParser.json());
 
