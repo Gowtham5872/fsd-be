@@ -9,6 +9,10 @@ const PORT =  3000;
 app.use(bodyParser.json());
 
 // API routes
+app.get('/', (req, res) => {
+  res.send('Welcome to the API');
+});
+
 app.post('/mentors', async (req, res) => {
   try {
     const { name } = req.body;
