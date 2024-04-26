@@ -1,0 +1,14 @@
+# Mentor-Student Management API
+
+This API provides endpoints to manage mentors and students, including assigning students to mentors and retrieving mentor-student relationships.
+
+## Endpoints
+
+### Create Mentor
+
+- **URL:** `/mentors`
+- **Method:** POST
+- **Description:** Creates a new mentor.
+- **Request Body:** JSON object with mentor name.
+ 
+ 
