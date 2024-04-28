@@ -4,6 +4,10 @@ const app = express();
 app.use(bodyParser.json());
 let rooms = [];
 let bookings = [];
+app.get("/",(req,res)=>{
+  res.send ("welcome to the api");
+}
+)
 app.post('/rooms', (req, res) => {
   const { seats, amenities, pricePerHour } = req.body;
   const roomId = rooms.length + 1;
